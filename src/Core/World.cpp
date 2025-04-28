@@ -9,7 +9,7 @@
 
 World::~World()
 {
-	delete pacman;
+	delete player;
 
 	for (Ghost* ghost : ghosts)
 	{
@@ -32,7 +32,7 @@ bool World::load()
 
 	set_blueprint(MAP_SKETCH);
 
-	pacman = c_pacman;
+	player = c_pacman;
 
 	set_map(get_blueprint());
 
@@ -53,22 +53,22 @@ void World::level_reset()
 		ghost->reset();
 	}
 
-	pacman->reset_position();
+	player->reset_position();
 	
 }
 
 void World::update(uint32_t deltaMilliseconds)
 {
-	if (get_victory() == false && pacman->get_dead() == false)
+	if (get_victory() == false && player->get_dead() == false)
 	{
 		set_victory(true);
 
-		pacman->update(*get_map(), get_level());
+		player->update(*get_map(), get_level());
 
 		for (Ghost* ghost : ghosts)
 		{
 			prev_update_ghost(ghost);
-			ghost->update(get_level(), *get_map(), *ghosts[0], pacman);
+			ghost->update(get_level(), *get_map(), *ghosts[0], player);
 		}
 
 		for (const std::array<map_sprites, MAP_HEIGHT>& column : *get_map())
@@ -90,23 +90,23 @@ void World::update(uint32_t deltaMilliseconds)
 
 		if (get_victory())
 		{
-			pacman->set_current_animation_time(0);
-			pacman->set_victory(true);
+			player->set_current_animation_time(0);
+			player->set_victory(true);
 		}
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
 	{
 		set_victory(false);
 
-		if (pacman->get_dead())
+		if (player->get_dead())
 		{
 			set_level(0);
-			pacman->reset();
+			player->reset();
 		}
 		else
 		{
 			set_level(get_level()+1);
-			pacman->next_level();
+			player->next_level();
 		}
 
 		set_map(get_blueprint());
@@ -117,31 +117,31 @@ void World::update(uint32_t deltaMilliseconds)
 
 void World::render(sf::RenderWindow& window)
 {
-	if (!get_victory() && !pacman->get_dead())
+	if (!get_victory() && !player->get_dead())
 	{
 		draw_map(*get_map(), window);
 		for (Ghost* ghost : ghosts)
 		{
-			ghost->draw(GHOST_FLASH_START >= pacman->get_energized_timer(), window);
+			ghost->draw(GHOST_FLASH_START >= player->get_energized_timer(), window);
 		}
 		draw_text(0, 0, SPRITES_SIZE * MAP_HEIGHT, "Nivel: " + std::to_string(1 + level), window);
-		draw_text(0, 0, SPRITES_SIZE * MAP_HEIGHT + SPRITES_SIZE, "Puntuacion: " + std::to_string(pacman->get_score()), window);
-		draw_pacman_lives(pacman, window);
+		draw_text(0, 0, SPRITES_SIZE * MAP_HEIGHT + SPRITES_SIZE, "Puntuacion: " + std::to_string(player->get_score()), window);
+		draw_pacman_lives(player, window);
 	}
 
-	pacman->render(window);
+	player->render(window);
 	
-	if (pacman->get_animation_game_over())
+	if (player->get_animation_game_over())
 	{
 		if (get_victory())
 		{
 			draw_text(1, 0, 0, "Siguiente nivel!", window);
 			draw_text(1, SPRITES_SIZE, SPRITES_SIZE, "Enter para continuar", window);
 		}
-		else if (pacman->get_lives() >= 1)
+		else if (player->get_lives() >= 1)
 		{
-			pacman->reset_position();
-			pacman->set_animation_game_over(false);
+			player->reset_position();
+			player->set_animation_game_over(false);
 			for (Ghost* ghost : ghosts)
 			{
 				ghost->reset_position();
@@ -172,7 +172,7 @@ std::array<std::array<map_sprites, MAP_HEIGHT>, MAP_WIDTH>* World::get_map()
 
 void World::set_map(std::array<std::string, MAP_HEIGHT> map)
 {
-	created_map = convert_sketch(map, ghosts, pacman);
+	created_map = convert_sketch(map, ghosts, player);
 }
 
 
@@ -228,7 +228,7 @@ void World::set_wave_time(short time)
 
 void World::prev_update_ghost(Ghost* ghost)
 {
-	if (pacman->get_energized_timer() == 0)
+	if (player->get_energized_timer() == 0)
 	{
 		if (get_wave_time() == 0)
 		{

@@ -13,18 +13,18 @@ class Ghost
 
 		~Ghost() = default;
 
-		void update(char level, std::array<std::array<map_sprites, MAP_HEIGHT>, MAP_WIDTH>& map, Ghost& ghost_ref, Pacman* pacman);
+		void update(char level, std::array<std::array<map_sprites, MAP_HEIGHT>, MAP_WIDTH>& map, Ghost& ghost_ref, Pacman* player);
 
 		void reset();
 		void reset_position();
 
-		bool pacman_hit(const sf::Vector2f& i_pacman_position);
+		bool player_hit(const sf::Vector2f& i_player_position);
 
-		float get_pacman_distance(char target_direction);
+		float get_player_distance(char target_direction);
 
 		void draw(bool flash, sf::RenderWindow& window);
 
-		void update_target(char i_pacman_direction, const sf::Vector2f& ghost_ref_position, const sf::Vector2f& i_pacman_position);
+		void update_target(char i_player_direction, const sf::Vector2f& ghost_ref_position, const sf::Vector2f& i_player_position);
 
 		void change_mode();
 

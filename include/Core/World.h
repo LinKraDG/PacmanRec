@@ -57,7 +57,7 @@ class World
 
 		short wave_time;
 
-		Pacman* pacman{ nullptr };
+		Pacman* player{ nullptr };
 		Ghost* ghost_0{ nullptr };
 		Ghost* ghost_1{ nullptr };
 		Ghost* ghost_2{ nullptr };

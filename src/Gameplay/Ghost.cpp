@@ -10,7 +10,7 @@ Ghost::Ghost(char ghost_id) : id(ghost_id)
 	face.setTexture(*ghostTexture);
 }
 
-void Ghost::update(char level, std::array<std::array<map_sprites, MAP_HEIGHT>, MAP_WIDTH>& map, Ghost& ghost_ref, Pacman* pacman)
+void Ghost::update(char level, std::array<std::array<map_sprites, MAP_HEIGHT>, MAP_WIDTH>& map, Ghost& ghost_ref, Pacman* player)
 {
 	bool move = false;
 
@@ -19,13 +19,13 @@ void Ghost::update(char level, std::array<std::array<map_sprites, MAP_HEIGHT>, M
 
 	std::array<bool, 4> walls{};
 
-	if (get_frightened_mode() == 0 && pacman->get_energized_timer() == ENERGIZER_DURATION / pow(2, level))
+	if (get_frightened_mode() == 0 && player->get_energized_timer() == ENERGIZER_DURATION / pow(2, level))
 	{
 		set_frightened_time(GHOST_FRIGHTENED_SPEED);
 
 		set_frightened_mode(1);
 	}
-	else if (pacman->get_energized_timer() == 0 && get_frightened_mode() == 1)
+	else if (player->get_energized_timer() == 0 && get_frightened_mode() == 1)
 	{
 		set_frightened_mode(0);
 	}
@@ -35,12 +35,12 @@ void Ghost::update(char level, std::array<std::array<map_sprites, MAP_HEIGHT>, M
 		speed = GHOST_ESCAPE_SPEED;
 	}
 
-	update_target(pacman->get_direction(), ghost_ref.get_position(), pacman->get_position());
+	update_target(player->get_direction(), ghost_ref.get_position(), player->get_position());
 
-	walls[0] = map_collisions(0, get_inside_home(), speed + get_position().x, get_position().y, map, pacman);
-	walls[1] = map_collisions(0, get_inside_home(), get_position().x, get_position().y - speed, map, pacman);
-	walls[2] = map_collisions(0, get_inside_home(), get_position().x - speed, get_position().y, map, pacman);
-	walls[3] = map_collisions(0, get_inside_home(), get_position().x, speed + get_position().y, map, pacman);
+	walls[0] = map_collisions(0, get_inside_home(), speed + get_position().x, get_position().y, map, player);
+	walls[1] = map_collisions(0, get_inside_home(), get_position().x, get_position().y - speed, map, player);
+	walls[2] = map_collisions(0, get_inside_home(), get_position().x - speed, get_position().y, map, player);
+	walls[3] = map_collisions(0, get_inside_home(), get_position().x, speed + get_position().y, map, player);
 
 	if (get_frightened_mode() != 1)
 	{
@@ -63,7 +63,7 @@ void Ghost::update(char level, std::array<std::array<map_sprites, MAP_HEIGHT>, M
 
 				available_ways++;
 
-				if (get_pacman_distance(a) < get_pacman_distance(optimal_direction))
+				if (get_player_distance(a) < get_player_distance(optimal_direction))
 				{
 					optimal_direction = a;
 				}
@@ -164,24 +164,24 @@ void Ghost::update(char level, std::array<std::array<map_sprites, MAP_HEIGHT>, M
 		}
 	}
 
-	if (pacman_hit(pacman->get_position()))
+	if (player_hit(player->get_position()))
 	{
 		if (get_frightened_mode() == 0)
 		{
-			if (pacman->get_lives() >= 1)
+			if (player->get_lives() >= 1)
 			{
-				pacman->loose_live();
-				pacman->set_dead(true);
+				player->loose_live();
+				player->set_dead(true);
 			}
 			else 
 			{
-				pacman->loose_live();
-				pacman->set_dead(true);
+				player->loose_live();
+				player->set_dead(true);
 			}
 		}
 		else if (get_frightened_mode() == 1) 
 		{
-			pacman->set_score(200);
+			player->set_score(200);
 			set_inside_home(true);
 			set_frightened_mode(2);
 			back_home();
@@ -229,11 +229,11 @@ void Ghost::reset_position()
 
 
 
-bool Ghost::pacman_hit(const sf::Vector2f& pacman_position)
+bool Ghost::player_hit(const sf::Vector2f& player_position)
 {
-	if (get_position().x > pacman_position.x - SPRITES_SIZE && get_position().x < SPRITES_SIZE + pacman_position.x)
+	if (get_position().x > player_position.x - SPRITES_SIZE && get_position().x < SPRITES_SIZE + player_position.x)
 	{
-		if (get_position().y > pacman_position.y - SPRITES_SIZE && get_position().y < SPRITES_SIZE + pacman_position.y)
+		if (get_position().y > player_position.y - SPRITES_SIZE && get_position().y < SPRITES_SIZE + player_position.y)
 		{
 			return true;
 		}
@@ -242,7 +242,7 @@ bool Ghost::pacman_hit(const sf::Vector2f& pacman_position)
 	return false;
 }
 
-float Ghost::get_pacman_distance(char target_direction)
+float Ghost::get_player_distance(char target_direction)
 {
 	short x = get_position().x;
 	short y = get_position().y;

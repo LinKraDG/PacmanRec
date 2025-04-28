@@ -123,7 +123,7 @@ void draw_map(const std::array<std::array<map_sprites, MAP_HEIGHT>, MAP_WIDTH>& 
 	}
 }
 
-bool map_collisions(bool collect_pellets, bool use_door, short map_x, short map_y, std::array<std::array<map_sprites, MAP_HEIGHT>, MAP_WIDTH>& map, Pacman* pacman)
+bool map_collisions(bool collect_pellets, bool use_door, short map_x, short map_y, std::array<std::array<map_sprites, MAP_HEIGHT>, MAP_WIDTH>& map, Pacman* player)
 {
 	bool output = false;
 
@@ -183,12 +183,12 @@ bool map_collisions(bool collect_pellets, bool use_door, short map_x, short map_
 					output = true;
 
 					map[x][y] = map_sprites::Empty;
-					pacman->set_score(50);
+					player->set_score(50);
 				}
 				else if (map_sprites::Pellet == map[x][y])
 				{
 					map[x][y] = map_sprites::Empty;
-					pacman->set_score(10);
+					player->set_score(10);
 				}
 			}
 		}
@@ -197,7 +197,7 @@ bool map_collisions(bool collect_pellets, bool use_door, short map_x, short map_
 	return output;
 }
 
-std::array<std::array<map_sprites, MAP_HEIGHT>, MAP_WIDTH> convert_sketch(const std::array<std::string, MAP_HEIGHT>& map_sketch, std::array<Ghost*, 4> &ghosts, Pacman *pacman)
+std::array<std::array<map_sprites, MAP_HEIGHT>, MAP_WIDTH> convert_sketch(const std::array<std::string, MAP_HEIGHT>& map_sketch, std::array<Ghost*, 4> &ghosts, Pacman * player)
 {
 	std::array<std::array<map_sprites, MAP_HEIGHT>, MAP_WIDTH> output_map{};
 	for (char a = 0; a < MAP_HEIGHT; a++)
@@ -260,8 +260,8 @@ std::array<std::array<map_sprites, MAP_HEIGHT>, MAP_WIDTH> convert_sketch(const 
 				}
 				case 'P':
 				{
-					pacman->set_origin_position(SPRITES_SIZE * b, SPRITES_SIZE * a);
-					pacman->set_position(SPRITES_SIZE * b, SPRITES_SIZE * a);
+					player->set_origin_position(SPRITES_SIZE * b, SPRITES_SIZE * a);
+					player->set_position(SPRITES_SIZE * b, SPRITES_SIZE * a);
 					break;
 				}
 				case 'o':
@@ -274,7 +274,7 @@ std::array<std::array<map_sprites, MAP_HEIGHT>, MAP_WIDTH> convert_sketch(const 
 	return output_map;
 }
 
-void draw_pacman_lives(Pacman* pacman, sf::RenderWindow& window)
+void draw_pacman_lives(Pacman* player, sf::RenderWindow& window)
 {
 	sf::Sprite sprite;
 	sf::Texture texture;
@@ -284,7 +284,7 @@ void draw_pacman_lives(Pacman* pacman, sf::RenderWindow& window)
 
 	sprite.setTextureRect(sf::IntRect(SPRITES_SIZE * 3, SPRITES_SIZE * 2, SPRITES_SIZE, SPRITES_SIZE));
 
-	for (char i = pacman->get_lives(); i >= 1; i--)
+	for (char i = player->get_lives(); i >= 1; i--)
 	{
 		sprite.setPosition(SPRITES_SIZE * MAP_WIDTH - SPRITES_SIZE * (i + 1), SPRITES_SIZE * MAP_HEIGHT);
 		window.draw(sprite);
