@@ -19,7 +19,7 @@ Evita los fantasmas todo lo que puedas mientras obtienes puntos de los recolecta
 
 -Fantasma devorado: 200p
 
-Una vez pierdas la 3ª vida perderás la partida, vigila sus movimientos.
+Una vez pierdas la 3ª vida perderás la partida, vigila bien sus movimientos y aguanta.
 
 ![Partida2](https://github.com/user-attachments/assets/13ff62ae-c21f-490e-bf38-5036fc2d05ce)
 ![Partida 2LV2](https://github.com/user-attachments/assets/6ef88d39-1d7f-497d-8966-d848461a6cd1)
